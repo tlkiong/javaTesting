@@ -42,7 +42,7 @@ public class testFileWriting {
 
 	public static void createFile() {
 		try {
-			File fileDir = new File("/test");
+			File fileDir = new File("test");
 	 
 			Writer out = new BufferedWriter(new OutputStreamWriter(
 				new FileOutputStream(fileDir), "UTF8"));
