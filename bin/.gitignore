@@ -3,3 +3,8 @@
 /runableExample.class
 /testFileWriting.class
 /testing.class
+/LZString$Context.class
+/LZString$Data.class
+/LZString$DecData.class
+/LZString.class
+/testGetHardwareInformation.class
