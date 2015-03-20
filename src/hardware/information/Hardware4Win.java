@@ -1,19 +1,19 @@
 package hardware.information;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URL;
 
 public class Hardware4Win {
+	
 	public String getWinInfo() {
 		String result = "";
-
+		URL url = Hardware4Win.class.getClassLoader().getResource("Resources/getHardwareInformation.bat");
 		try {
 			Runtime runtime = Runtime.getRuntime();
 			Process proc = runtime
-					.exec("powershell.exe  \"C:\\Users\\User\\Desktop\\getHardwareInformation.bat\"  ");
+					.exec("powershell.exe  \""+url.getPath().toString().substring(1)+"\"  ");
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader reader = new BufferedReader(isr);
