@@ -1,3 +1,4 @@
+package mainTest;
 import org.apache.commons.mail.HtmlEmail;
 
 public class EmailSending {

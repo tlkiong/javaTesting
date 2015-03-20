@@ -1,3 +1,4 @@
+package mainTest;
 /*
 * LZString4Java By Rufus Huang 
 * https://github.com/rufushuang/lz-string4java

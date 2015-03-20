@@ -1,3 +1,4 @@
+package mainTest;
 import java.util.Hashtable;
 import java.util.Scanner;
 
