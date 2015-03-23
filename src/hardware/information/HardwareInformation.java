@@ -7,7 +7,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 
 import mainTest.LZString;
-import mainTest.TestGetHardwareInformation;
 
 public class HardwareInformation {
 
@@ -187,15 +186,15 @@ public class HardwareInformation {
 	private String getMacInfo() {
 		String hardwareId = "";
 		try {
-			Process proc = Runtime.getRuntime().exec("/usr/sbin/system_profiler -c SPHardwareDataType");
+			Process proc = Runtime.getRuntime().exec("system_profiler SPHardwareDataType");
 			InputStream is = proc.getInputStream();
 			InputStreamReader isr = new InputStreamReader(is);
 			BufferedReader reader = new BufferedReader(isr);
 			String line = "";
 			while ((line = reader.readLine()) != null) {
-				hardwareId += line.substring(line.lastIndexOf(":") + 2).trim() + "||";
-				System.out.println("hardwareId: " + hardwareId);
-				System.out.println("line: " + line);
+				hardwareId += line.trim() + "||";
+//				System.out.println("hardwareId: " + hardwareId);
+//				System.out.println("line: " + line);
 			}
 			reader.close();
 			proc.getOutputStream().close();
