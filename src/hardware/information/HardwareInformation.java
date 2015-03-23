@@ -107,7 +107,20 @@ public class HardwareInformation {
 	/**
 	 * Getting hardware information for windows OS
 	 * 
-	 * @return
+	 * @return The below as one string (as is - xx||yy|zz...)
+	 *  Motherboard Manufacturer ||
+	 *  Motherboard Serial Number ||
+	 *  Bios Name ||
+	 *  Bios Serial Number ||
+	 *  Bios Version ||
+	 *  Cpu Name ||
+	 *  Cpu Type ||
+	 *  Cpu ID ||
+	 *  HDD Name ||
+	 *  HDD Model ||
+	 *  Intel Chipset Name ||
+	 *  Intel Chipset Device ID ||
+	 *  Memory Serial Number
 	 */
 	public static String getWinInfo() {
 		String hardwareId = "";
@@ -134,9 +147,9 @@ public class HardwareInformation {
 	}
 
 	/**
-	 * Getting hardware information for Unix information
+	 * Getting hardware information for Unix
 	 * 
-	 * @return
+	 * @return data taken using 'lspci'
 	 */
 	private String getUnixInfo() {
 		String hardwareId = "";
@@ -166,9 +179,30 @@ public class HardwareInformation {
 		return hardwareId;
 	}
 
+	/**
+	 * Getting hardware information for Mac 
+	 * 
+	 * @return data taken using 'SPHardwareDataType' in system_profiler
+	 */
 	private String getMacInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		String hardwareId = "";
+		try {
+			Process proc = Runtime.getRuntime().exec("/usr/sbin/system_profiler -c SPHardwareDataType");
+			InputStream is = proc.getInputStream();
+			InputStreamReader isr = new InputStreamReader(is);
+			BufferedReader reader = new BufferedReader(isr);
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				hardwareId += line.substring(line.lastIndexOf(":") + 2).trim() + "||";
+				System.out.println("hardwareId: " + hardwareId);
+				System.out.println("line: " + line);
+			}
+			reader.close();
+			proc.getOutputStream().close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return hardwareId;
 	}
 
 }
