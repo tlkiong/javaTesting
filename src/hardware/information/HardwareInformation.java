@@ -106,7 +106,7 @@ public class HardwareInformation {
 	/**
 	 * Getting hardware information for windows OS
 	 * 
-	 * @return The below as one string (as is - xx||yy|zz...)
+	 * @return The below as one string (as is - xx||yy||zz...)
 	 *  Motherboard Manufacturer ||
 	 *  Motherboard Serial Number ||
 	 *  Bios Name ||
@@ -148,7 +148,17 @@ public class HardwareInformation {
 	/**
 	 * Getting hardware information for Unix
 	 * 
-	 * @return data taken using 'lspci'
+	 * @return data taken using 'lspci' - The below as one string (as is - xx||yy||zz...)
+	 *  Host bridge||
+	 *  ISA bridge||
+	 *  IDE Interface||
+	 *  VGA compatible controller||
+	 *  Ethernet controller||
+	 *  System peripheral||
+	 *  Multimedia audio controller||
+	 *  USB controller||
+	 *  Bridge||
+	 *  SATA conroller||
 	 */
 	private String getUnixInfo() {
 		String hardwareId = "";
@@ -168,7 +178,7 @@ public class HardwareInformation {
 					hardwareId += line.substring((line.lastIndexOf(":") + 2)).trim()
 							+ "||";
 				}
-				//System.out.println("hardwareId: " + hardwareId);
+				System.out.println("hardwareId: " + hardwareId);
 			}
 			reader.close();
 			proc.getOutputStream().close();
@@ -181,7 +191,25 @@ public class HardwareInformation {
 	/**
 	 * Getting hardware information for Mac 
 	 * 
-	 * @return data taken using 'SPHardwareDataType' in system_profiler
+	 * @return data taken using 'SPHardwareDataType' in system_profiler - The below as one string (as is - xx||yy||zz...)
+	 *  Hardware: xx||
+	 *  Hardware Overview: xx||
+	 *  Model Name: xx||
+	 *  Model Identifier: xx||
+	 *  Processor Name: xx||
+	 *  Processor Speed: xx||
+	 *  Number of Processors: xx||
+	 *  Total Number of Cores: xx||
+	 *  L2 Cache (per Core): xx||
+	 *  L3 Cache: xx||
+	 *  Memory: xx||
+	 *  Boot ROM Version: xx||
+	 *  SMC Version (system): xx||
+	 *  Serial Number (system): xx||
+	 *  Hardware UUID: xx||
+	 *  Sudden Motion Sensor: xx||
+	 *  State: xx||
+	 *  ||
 	 */
 	private String getMacInfo() {
 		String hardwareId = "";
