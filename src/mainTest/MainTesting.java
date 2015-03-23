@@ -1,15 +1,7 @@
 package mainTest;
-import java.util.Hashtable;
 import java.util.Scanner;
 
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-
 import org.xbill.DNS.Lookup;
-import org.xbill.DNS.MXRecord;
 import org.xbill.DNS.Record;
 import org.xbill.DNS.Type;
 
