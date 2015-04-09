@@ -15,6 +15,7 @@
 	<classpathentry kind="lib" path="lib/MeteorDependencies/junit-4.12-beta-2.jar"/>
 	<classpathentry kind="lib" path="lib/MeteorDependencies/slf4j-api-1.7.7.jar"/>
 	<classpathentry kind="lib" path="lib/MeteorDependencies/slf4j-simple-1.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/SendGrid/sendgrid-java.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
