@@ -22,7 +22,7 @@ import java.util.List;
  
 public class javaFxPaginationTable extends Application {
  
-    private final static int dataSize = 200000;
+    private final static int dataSize = 1000000;
     private final static int rowsPerPage = 1000;
  
     private final TableView<Sample> table = createTable();
@@ -53,28 +53,31 @@ public class javaFxPaginationTable extends Application {
         TableColumn<Sample, String> column3 = new TableColumn<>("Bar");
         column3.setCellValueFactory(param -> param.getValue().bar);
         column3.setPrefWidth(250);
- 
+        
+        
+        
         table.getColumns().addAll(column1, column2, column3);
  
         return table;
     }
  
     private Node createPage(int pageIndex) {
- 
+    	System.out.println("here");
         int fromIndex = pageIndex * rowsPerPage;
         int toIndex = Math.min(fromIndex + rowsPerPage, data.size());
         table.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
+//        table.setItems(FXCollections.observableArrayList(data));
  
         return new BorderPane(table);
     }
  
     @Override
     public void start(final Stage stage) throws Exception {
- 
         Pagination pagination = new Pagination((data.size() / rowsPerPage + 1), 0);
+//        Pagination pagination = new Pagination(1, 0);
         pagination.setStyle("-fx-border-color: black;");
         pagination.setPageFactory(this::createPage);
-        pagination.setMaxPageIndicatorCount(3);
+        pagination.setMaxPageIndicatorCount(9);
         
         Scene scene = new Scene(new BorderPane(pagination), 1024, 768);
         stage.setScene(scene);
