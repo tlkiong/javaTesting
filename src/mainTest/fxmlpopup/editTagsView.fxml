@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="292.0" prefWidth="362.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="mainTest.fxmlpopup.EditTagsViewController">
+   <children>
+      <GridPane AnchorPane.bottomAnchor="25.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="216.0" minWidth="10.0" prefWidth="138.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="312.0" minWidth="10.0" prefWidth="312.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="ID" />
+            <TextField fx:id="idTxtField" GridPane.columnIndex="1" />
+            <Label text="Selected" GridPane.rowIndex="1" />
+            <TextField fx:id="selectedTxtField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label text="Foo" GridPane.rowIndex="2" />
+            <TextField fx:id="fooTxtField" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label text="Bar" GridPane.rowIndex="3" />
+            <TextField fx:id="barTxtField" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         </children>
+      </GridPane>
+      <Button mnemonicParsing="false" onAction="#handleDone" text="Done" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

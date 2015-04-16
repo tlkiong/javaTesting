@@ -36,48 +36,6 @@ public class TableViewCheckBoxColumnDemo extends Application {
 	private TableView<Employee> employeeTable;
 	private Button exportButton;
 
-	private final EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-		@Override
-		public void handle(ActionEvent event) {
-			// Checking for an unselected employee in the table view.
-			boolean unSelectedFlag = false;
-			for (Employee item : getEmployeeTable().getItems()) {
-				if (!item.getSelected()) {
-					unSelectedFlag = true;
-					break;
-				}
-			}
-			
-			/*
-			 * If at least one employee is not selected, then deselecting the check box in the table column header, else if all employees
-			 * are selected, then selecting the check box in the header.
-			 */
-			if (unSelectedFlag) {
-				getSelectAllCheckBox().setSelected(false);
-			} else {
-				getSelectAllCheckBox().setSelected(true);
-			}
-
-			// Checking for a selected employee in the table view.
-			boolean selectedFlag = false;
-			for (Employee item : getEmployeeTable().getItems()) {
-				if (item.getSelected()) {
-					selectedFlag = true;
-					break;
-				}
-			}
-			/*
-			 * If at least one employee is selected, then enabling the "Export" button, else if none of the employees are selected, then
-			 * disabling the "Export" button.
-			 */
-			if (selectedFlag) {
-				enableExportButton();
-			} else {
-				disableExportButton();
-			}
-		}
-	};
-
 	/**
 	 * Lazy getter for the selectAllCheckBox.
 	 * 
@@ -235,6 +193,52 @@ public class TableViewCheckBoxColumnDemo extends Application {
 		}
 		return employeeTable;
 	}
+
+	private final EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+		@Override
+		public void handle(ActionEvent event) {
+			// Checking for an unselected employee in the table view.
+			boolean unSelectedFlag = false;
+			System.out.println("\tcreateTable().getItems(): "+getEmployeeTable().getItems());
+			for (Employee item : getEmployeeTable().getItems()) {
+				if (!item.getSelected()) {
+					System.out.println("\titem n selected: "+item);
+					unSelectedFlag = true;
+					break;
+				} else if (item.getSelected()){
+					System.out.println("\titem selected: "+item);
+				}
+			}
+			
+			/*
+			 * If at least one employee is not selected, then deselecting the check box in the table column header, else if all employees
+			 * are selected, then selecting the check box in the header.
+			 */
+			if (unSelectedFlag) {
+				getSelectAllCheckBox().setSelected(false);
+			} else {
+				getSelectAllCheckBox().setSelected(true);
+			}
+
+			// Checking for a selected employee in the table view.
+			boolean selectedFlag = false;
+			for (Employee item : getEmployeeTable().getItems()) {
+				if (item.getSelected()) {
+					selectedFlag = true;
+					break;
+				}
+			}
+			/*
+			 * If at least one employee is selected, then enabling the "Export" button, else if none of the employees are selected, then
+			 * disabling the "Export" button.
+			 */
+			if (selectedFlag) {
+				enableExportButton();
+			} else {
+				disableExportButton();
+			}
+		}
+	};
 
 	public Button getExportButton() {
 		if (this.exportButton == null) {

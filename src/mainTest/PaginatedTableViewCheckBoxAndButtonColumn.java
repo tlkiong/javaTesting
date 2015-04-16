@@ -1,5 +1,6 @@
 package mainTest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +18,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -27,24 +30,30 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-public class PaginatedTableViewCheckBoxColumn extends Application {
+public class PaginatedTableViewCheckBoxAndButtonColumn extends Application {
+	public static Stage popupStage;
+	
 	private CheckBox selectAllCheckBox;
 	private Button exportButton;
 
 	private final static int dataSize = 200000;
 	private final static int rowsPerPage = 15;
-	
+
 	private final List<Sample> data = createData();
 	private final TableView<Sample> table = createTable();
-	
-	
+
 	private int fromIndex;
 	private int toIndex;
+	
+	private static Sample sample; 
 
 	private List<Sample> createData() {
 		List<Sample> data = new ArrayList<>(dataSize);
@@ -62,24 +71,30 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 		TableColumn<Sample, Boolean> selectedCol = new TableColumn<Sample, Boolean>();
 		selectedCol.setMinWidth(50);
 		selectedCol.setGraphic(getSelectAllCheckBox());
-		selectedCol.setCellValueFactory(new PropertyValueFactory<Sample, Boolean>(
+		selectedCol
+				.setCellValueFactory(new PropertyValueFactory<Sample, Boolean>(
 						"selected"));
-		
-		selectedCol.setCellFactory(new Callback<TableColumn<Sample, Boolean>, TableCell<Sample, Boolean>>() {
+
+		selectedCol
+				.setCellFactory(new Callback<TableColumn<Sample, Boolean>, TableCell<Sample, Boolean>>() {
 					public TableCell<Sample, Boolean> call(
 							TableColumn<Sample, Boolean> p) {
 						final TableCell<Sample, Boolean> cell = new TableCell<Sample, Boolean>() {
 							@Override
-							public void updateItem(final Boolean item,	boolean empty) {
+							public void updateItem(final Boolean item,
+									boolean empty) {
 								if (item == null)
 									return;
 								super.updateItem(item, empty);
 								if (!isEmpty()) {
-									final Sample employee = getTableView().getItems().get(getIndex());
+									final Sample employee = getTableView()
+											.getItems().get(getIndex());
 									CheckBox checkBox = new CheckBox();
-									checkBox.selectedProperty().bindBidirectional(employee.selectedProperty());
-									checkBox.setOnAction(event);
-									//in line checkbox
+									checkBox.selectedProperty()
+											.bindBidirectional(
+													employee.selectedProperty());
+									checkBox.setOnAction(checkBoxClicked);
+									// in line checkbox
 									setGraphic(checkBox);
 								}
 							}
@@ -88,7 +103,50 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 						return cell;
 					}
 				});
-		
+
+		// "Selected" column
+		TableColumn<Sample, Boolean> editBtnCol = new TableColumn<>("Edit");
+		editBtnCol.setMinWidth(50);
+		editBtnCol.setCellValueFactory(new PropertyValueFactory<Sample, Boolean>(
+						"selected"));
+
+		editBtnCol.setCellFactory(new Callback<TableColumn<Sample, Boolean>, TableCell<Sample, Boolean>>() {
+					public TableCell<Sample, Boolean> call(
+							TableColumn<Sample, Boolean> p) {
+						final TableCell<Sample, Boolean> cell = new TableCell<Sample, Boolean>() {
+							@Override
+							public void updateItem(final Boolean item,
+									boolean empty) {
+								if (item == null)
+									return;
+								super.updateItem(item, empty);
+								if (!isEmpty()) {
+									final Sample employee = getTableView()
+											.getItems().get(getIndex());
+									Image editBtnImg = new Image(getClass().getResourceAsStream("../resources/img/Buttons/Edit.png"));
+									Button editBtn = new Button();
+									editBtn.setGraphic(new ImageView(editBtnImg));
+									editBtn.setStyle("-fx-background-color: #BFBFBF;");
+									editBtn.setOnAction(new EventHandler<ActionEvent>() {
+							            @Override
+							            public void handle(ActionEvent event) {
+//							            	employee.setSelected(!employee.getSelected());
+							            	
+							            	//Select the current row information to edit
+							            	editPopUp(employee);
+							            }
+							        });
+//									editBtn.setOnAction(editBtnClicked);
+									// in line edit button
+									setGraphic(editBtn);
+								}
+							}
+						};
+						cell.setAlignment(Pos.CENTER);
+						return cell;
+					}
+				});
+
 		TableColumn<Sample, Integer> column1 = new TableColumn<>("Id");
 		column1.setCellValueFactory(param -> param.getValue().id);
 		column1.setPrefWidth(150);
@@ -100,11 +158,12 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 		TableColumn<Sample, String> column3 = new TableColumn<>("Bar");
 		column3.setCellValueFactory(param -> param.getValue().bar);
 		column3.setPrefWidth(250);
-		
+
 		final TableView<Sample> tableView = new TableView<Sample>();
-		tableView.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
-		tableView.getColumns().addAll(selectedCol, column1, column2, column3);
-		
+		tableView.setItems(FXCollections.observableArrayList(data.subList(
+				fromIndex, toIndex)));
+		tableView.getColumns().addAll(selectedCol, editBtnCol, column1, column2, column3);
+
 		ListBinding<Boolean> lb = new ListBinding<Boolean>() {
 			{
 				bind(tableView.getItems());
@@ -120,7 +179,6 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 				return list;
 			}
 		};
-		
 
 		tableView.getItems().addListener(new InvalidationListener() {
 
@@ -129,32 +187,50 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 				System.out.println("invalidated");
 			}
 		});
-		tableView.getItems().addListener(
-				new ListChangeListener<Sample>() {
+		tableView.getItems().addListener(new ListChangeListener<Sample>() {
 
-					@Override
-					public void onChanged(
-							javafx.collections.ListChangeListener.Change<? extends Sample> arg0) {
-						System.out.println("changed");
-					}
-				});
+			@Override
+			public void onChanged(
+					javafx.collections.ListChangeListener.Change<? extends Sample> arg0) {
+				System.out.println("changed");
+			}
+		});
 		return tableView;
 	}
 
 	private Node createPage(int pageIndex) {
 		setFromIndex(pageIndex * rowsPerPage);
 		setToIndex(Math.min(getFromIndex() + rowsPerPage, data.size()));
-		
-//		int fromIndex = pageIndex * rowsPerPage;
-//        int toIndex = Math.min(fromIndex + rowsPerPage, data.size());
-//        table.setItems(FXCollections.observableArrayList(data.subList(fromIndex, toIndex)));
-		
-//		table.setItems(FXCollections.observableArrayList(data.subList(
-//				this.fromIndex, this.toIndex)));
-		
+
+		// int fromIndex = pageIndex * rowsPerPage;
+		// int toIndex = Math.min(fromIndex + rowsPerPage, data.size());
+		// table.setItems(FXCollections.observableArrayList(data.subList(fromIndex,
+		// toIndex)));
+
+		// table.setItems(FXCollections.observableArrayList(data.subList(
+		// this.fromIndex, this.toIndex)));
+
 		return new BorderPane(createTable());
 	}
+	
+	private void editPopUp(Sample sample) {
+		this.sample = sample;
+		popupStage = new Stage();
+		try {
+			Parent root = FXMLLoader.load(getClass().getResource("fxmlpopup/editTagsView.fxml"));
+			popupStage.setScene(new Scene(root));
+			popupStage.setTitle("Add Address Book");
+			popupStage.initModality(Modality.APPLICATION_MODAL);
+			popupStage.setResizable(false);
+			popupStage.centerOnScreen();
+			//Get data from db to display on the table again
+			popupStage.showAndWait();
 
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	@Override
 	public void start(final Stage stage) throws Exception {
 		VBox vb = new VBox(20);
@@ -165,11 +241,11 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 		pagination.setMaxPageIndicatorCount(9);
 		pagination.setMinHeight(460);
 		pagination.setMaxHeight(460);
-		
-		vb.getChildren().addAll(pagination,getExportButton());
+
+		vb.getChildren().addAll(pagination, getExportButton());
 		vb.setMinHeight(400);
 		Scene scene = new Scene(new BorderPane(vb), 1024, 700);
-		
+
 		stage.setScene(scene);
 		stage.setTitle("Paginated Table View Check Box Column");
 		stage.show();
@@ -180,7 +256,7 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 	}
 
 	public static class Sample {
-		
+
 		private SimpleBooleanProperty selected;
 		private final ObservableValue<Integer> id;
 		private final SimpleStringProperty foo;
@@ -219,7 +295,7 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 
 	}
 
-	private final EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
+	private final EventHandler<ActionEvent> checkBoxClicked = new EventHandler<ActionEvent>() {
 		@Override
 		public void handle(ActionEvent event) {
 
@@ -231,7 +307,7 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 					break;
 				}
 			}
-			
+
 			/*
 			 * If at least one employee is not selected, then deselecting the
 			 * check box in the table column header, else if all employees are
@@ -263,7 +339,7 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 			}
 		}
 	};
-
+	
 	/**
 	 * Lazy getter for the selectAllCheckBox.
 	 * 
@@ -292,7 +368,6 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 		return selectAllCheckBox;
 	}
 
-
 	public Button getExportButton() {
 		if (this.exportButton == null) {
 			final Button exportButton = new Button("Export");
@@ -302,7 +377,9 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 					System.out.println("Sample Selected : [");
 					for (Sample employee : createTable().getItems()) {
 						if (employee.getSelected()) {
-							System.out.println(employee.getId().getValue() + " : "+employee.getFoo().getValue() + " : "+employee.getBar().getValue());
+							System.out.println(employee.getId().getValue()
+									+ " : " + employee.getFoo().getValue()
+									+ " : " + employee.getBar().getValue());
 						}
 					}
 					System.out.println(" ]\n");
@@ -342,5 +419,9 @@ public class PaginatedTableViewCheckBoxColumn extends Application {
 
 	public void setToIndex(int toIndex) {
 		this.toIndex = toIndex;
+	}
+
+	public static Sample getSample() {
+		return sample;
 	}
 }
