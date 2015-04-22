@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 public class CountdownTimer {
 	Toolkit toolkit;
 
@@ -37,6 +39,10 @@ public class CountdownTimer {
 
 	public static void main(String args[]) {
 		System.out.println("About to schedule task.");
+		
+		String abc = "6.8888";
+		System.out.println("abc: "+NumberUtils.isNumber(abc));
+		
 		new CountdownTimer(2);
 		System.out.println("Task scheduled.");
 	}
